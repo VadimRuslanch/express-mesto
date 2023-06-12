@@ -12,9 +12,9 @@ const getCards = (req, res, next) => {
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
 
-  req.user = {
-    _id: '6485cd144f2bbad724aa4820'
-  };
+  // req.user = {
+  //   _id: '6485cd144f2bbad724aa4820'
+  // };
 
   Card.create({ name, link, owner: req.user._id })
     .then(card => res.send({ data: card }))

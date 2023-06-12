@@ -10,9 +10,9 @@ const getUsers = (req, res, next) => {
 };
 
 const getUserById = (req, res, next) => {
-  req.user = {
-    _id: '6485cd144f2bbad724aa4820'
-  };
+  // req.user = {
+  //   _id: '6485cd144f2bbad724aa4820'
+  // };
   const userId = req.user;
   User.findById(userId)
     .then((users) => {
@@ -56,9 +56,9 @@ const createUser = (req, res, next) => {
 
 const updProfile = (req, res, next) => {
   const { name, about } = req.body;
-  req.user = {
-    _id: '6485cd144f2bbad724aa4820'
-  };
+  // req.user = {
+  //   _id: '6485cd144f2bbad724aa4820'
+  // };
 
   User.findByIdAndUpdate(req.user._id, { name, about })
     .then((user) => {
@@ -79,9 +79,9 @@ const updProfile = (req, res, next) => {
 
 const updAvatar = (req, res, next) => {
   const { avatar } = req.body;
-  req.user = {
-    _id: '6485cd144f2bbad724aa4820'
-  };
+  // req.user = {
+  //   _id: '6485cd144f2bbad724aa4820'
+  // };
 
   User.findByIdAndUpdate(req.user._id, { avatar })
     .then((user) => {
