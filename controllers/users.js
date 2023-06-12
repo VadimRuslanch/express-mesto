@@ -5,16 +5,16 @@ const user = require('../models/user');
 
 const getUsers = (req, res, next) => {
   User.find({})
-    .then(users => res.send({ data: users }))
+    .then((users) => res.send(users))
     .catch(next);
+
 };
 
 const getUserById = (req, res, next) => {
-  const userId = req.user;
+  const userId = req.user._id;
+
   User.findById(userId)
-    .then((users) => {
-      res.send({ data: users })
-    })
+    .then(user => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Передан некорректный id пользователя'));
@@ -31,11 +31,7 @@ const createUser = (req, res, next) => {
 
 
   User.create({ name, about, avatar })
-    .then(user => res.send({
-      name: user.name,
-      about: user.about,
-      avatar: user.avatar,
-    }))
+    .then(user => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError(
