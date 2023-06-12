@@ -30,38 +30,32 @@ const getUserById = (req, res, next) => {
 };
 
 const createUser = (req, res, next) => {
+  const { name, about, avatar } = req.body;
 
 
-  // req.user = {
-  //   _id: '6485cd144f2bbad724aa4820'
-  // };
-  // User.create({
-  //   name,
-  //   about,
-  //   avatar,
-  // })
-  //   .then((user) => {
-  //     res.send({ data: user })
-  //     console.log({ data: user })
-  //   })
-  //   .catch((err) => {
-  //     if (err.name === 'ValidationError') {
-  //       next(new BadRequestError(
-  //         'Переданы некорректные данные в методы создания пользователя',
-  //       ));
-  //     } else if (err.code === 11000) {
-  //       next(new ConflictError(
-  //         'Пользователь с таким электронным адресом уже существует',
-  //       ));
-  //     } else {
-  //       next(err);
-  //     }
-  //   });
+  User.create({ name, about, avatar })
+    .then(user => res.send({
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+    }))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError(
+          'Переданы некорректные данные в методы создания пользователя',
+        ));
+      } else if (err.code === 11000) {
+        next(new ConflictError(
+          'Пользователь с таким электронным адресом уже существует',
+        ));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const updProfile = (req, res, next) => {
   const { name, about } = req.body;
-
   req.user = {
     _id: '6485cd144f2bbad724aa4820'
   };
@@ -85,7 +79,6 @@ const updProfile = (req, res, next) => {
 
 const updAvatar = (req, res, next) => {
   const { avatar } = req.body;
-
   req.user = {
     _id: '6485cd144f2bbad724aa4820'
   };

@@ -30,19 +30,12 @@ const createCard = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  const { cardId } = req.body;
-  console.log(req.body)
-  req.user = {
-    _id: '6485cd144f2bbad724aa4820'
-  };
-
-  Card.findById(cardId)
+  const cardId = req.body;
+  console.log(Card)
+  Card.findById(cardId.owner)
     .then((card) => {
-      if (card.owner.toString() === req.user._id) {
-        Card.findByIdAndRemove(cardId).then(() => res.send(card));
-      } else {
-        throw new ForbiddenError('Нельзя удалять чужие карточки');
-      }
+      Card.findByIdAndRemove(cardId.owner)
+        .then(() => res.send(card));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
