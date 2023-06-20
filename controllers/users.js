@@ -1,26 +1,19 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-
 const User = require('../models/user');
 const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
 const user = require('../models/user');
 
-const { NODE_ENV, JWT_SECRET = 'dev-secret' } = process.env;
-
 const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
     .catch(next);
+
 };
 
 const getUserById = (req, res, next) => {
   const userId = req.user._id;
 
   User.findById(userId)
-    .orFail(() => {
-      throw new NotFoundError(`Пользователь c id: ${userId} не найден`);
-    })
     .then(user => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -34,18 +27,13 @@ const getUserById = (req, res, next) => {
 };
 
 const createUser = (req, res, next) => {
-  const { name, about, avatar, email, password } = req.body;
+  const { name, about, avatar } = req.body;
 
-  bcrypt.hash(req.body.password, 10)
-    .then(hash => User.create({ name, about, avatar, email, password: hash })
-      .then(user => {
-        console.log(user)
-        res.send(user)
-      })
-    )
-    .then((user) => {
-      res.status(201).send({ _id: user._id, email: user.email });
-    })
+
+  User.create({ name, about, avatar })
+    .then(user => {
+      console.log(user)
+      res.send(user)})
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError(
@@ -58,7 +46,7 @@ const createUser = (req, res, next) => {
       } else {
         next(err);
       }
-    })
+    });
 };
 
 const updProfile = (req, res, next) => {
@@ -101,33 +89,10 @@ const updAvatar = (req, res, next) => {
     });
 };
 
-const login = (req, res, nex) => {
-  const { email, password } = req.body;
-
-  User.findUserByCredentials(email, password)
-    .then((user) => {
-      const token = jwt.sign(
-        { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'dev-key',
-        { expiresIn: '7d' },
-      );
-      res
-        .cookie('jwt', token, {
-          maxAge: (7 * 24 * 60 * 60),
-          httpOnly: true,
-          sameSite: true,
-        })
-        .send({ message: 'Вы успешно авторизовались!' })
-        .end();
-    })
-    .catch(next);
-}
-
 module.exports = {
   getUsers,
   getUserById,
   createUser,
   updProfile,
-  updAvatar,
-  login
+  updAvatar
 };
