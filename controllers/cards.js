@@ -52,20 +52,23 @@ const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(cardId,
     { $addToSet: { likes: req.user._id } },
     { new: true })
+    .orFail(() => {
+      throw new NotFoundError(`Карточка с id: ${cardId} не найдена`);
+    })
     .then((card) => {
       res.status(201).send(card);
     })
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         next(new BadRequestError(
-          `Передан некорректный id: ${cardId} в методы постановки лайка карточки`,
+          `Передан некорректный id: ${cardId} в методы лайка карточки`,
         ));
       } else if (err.name === 'NotFoundError') {
         next(new NotFoundError(`Карточка с id: ${cardId} не найдена`));
       } else {
         next(err);
       }
-    });
+    })
 };
 
 const dislikeCard = (req, res, next) => {

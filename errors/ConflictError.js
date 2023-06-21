@@ -1,9 +1,9 @@
-class NotFoundError extends Error {
+class ConflictError extends Error {
   constructor(message) {
     super(message);
     this.name = this.constructor.name;
-    this.status = 404;
+    this.status = 409;
   }
 }
 
-module.exports = NotFoundError;
+module.exports = ConflictError;

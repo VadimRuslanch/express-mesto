@@ -1,7 +1,5 @@
 module.exports = {
   "env": {
-    "browser": true,
-    "commonjs": true,
     "es2021": true,
     "node": true
   },
@@ -13,10 +11,7 @@ module.exports = {
   "parserOptions": {
     "ecmaVersion": "latest"
   },
-  "plugins": [
-    "react"
-  ],
   "rules": {
-    "no-underscore-dangle": 0
+    "no-underscore-dangle": ["error", { "allow": ["_id"] }]
   }
 }
