@@ -37,9 +37,11 @@ async function connect() {
 
 app.use(errors());
 app.use((err, __, res, next) => {
+  // eslint-disable-next-line no-console
+  console.log(err);
   const { statusCode = 500, message } = err;
   res.status(statusCode).send({
-    message: statusCode === 500 ? 'На сервере произошла ошибка' : message,
+    statusCode, message: statusCode === 500 ? 'На сервере произошла ошибка' : message,
   });
   next();
 });
