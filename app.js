@@ -10,17 +10,10 @@ app.use(bodyParser.json());
 
 const { PORT = 3000, MONGO_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 const { login, createUser } = require('./controllers/users');
+const { validationCreateUser, validationLogin } = require('./middlewares/validation');
 
-// const { PORT = 3000 } = process.env;
-// mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
-// });
-// app.listen(PORT, () => {
-//   // eslint-disable-next-line no-console
-//   console.log(`App listening on port ${PORT}`);
-// });
-
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signin', validationCreateUser, login);
+app.post('/signup', validationLogin, createUser);
 app.use(auth);
 app.use(routes);
 
@@ -32,10 +25,13 @@ async function connect() {
       useUnifiedTopology: true,
       family: 4,
     });
+    // eslint-disable-next-line no-console
     console.log(`App connected ${MONGO_URL}`);
     await app.listen(PORT);
+    // eslint-disable-next-line no-console
     console.log(`App listening on port ${PORT}`);
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.log(err);
   }
 }
