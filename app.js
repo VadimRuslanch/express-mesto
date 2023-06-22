@@ -27,14 +27,15 @@ app.use(routes);
 async function connect() {
   try {
     await mongoose.set('strictQuery', false);
-    await mongoose.connect('mongodb://localhost:27017/mestodb');
-    // eslint-disable-next-line no-console
+    await mongoose.connect('mongodb://localhost:27017/mestodb', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      family: 4,
+    });
     console.log(`App connected ${MONGO_URL}`);
     await app.listen(PORT);
-    // eslint-disable-next-line no-console
     console.log(`App listening on port ${PORT}`);
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.log(err);
   }
 }
