@@ -11,6 +11,7 @@ const cardSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
+      // eslint-disable-next-line no-undef
       validator: (url) => validator.isURL(url),
       message: 'Некорректный адрес URL',
     },

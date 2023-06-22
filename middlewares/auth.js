@@ -15,8 +15,8 @@ const auth = (req, res, next) => {
         : 'dev-secret'}`,
     );
   } catch (err) {
-    next(new UnauthorizedError('Неверный электронный адрес или пароль'));
-  };
+    return next(new UnauthorizedError('Неверный электронный адрес или пароль'));
+  }
 
   req.user = payload;
 
