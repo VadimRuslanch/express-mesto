@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const { errors } = require('celebrate');
+// const { errors } = require('celebrate');
 const routes = require('./routes/index');
 const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
@@ -35,13 +35,11 @@ async function connect() {
   }
 }
 
-app.use(errors());
-app.use((err, req, res, next) => {
+// app.use(errors());
+app.use((err, __, res, next) => {
   const { statusCode = 500, message } = err;
   res.status(statusCode).send({
-    message: statusCode === 500
-      ? 'На сервере произошла ошибка'
-      : message,
+    message: statusCode === 500 ? 'На сервере произошла ошибка' : message,
   });
   next();
 });

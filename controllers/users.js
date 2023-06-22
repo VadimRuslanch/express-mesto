@@ -97,25 +97,27 @@ const createUser = (req, res, next) => {
     name, about, avatar, email, password,
   } = req.body;
 
-  bcrypt.hash(password, 10)
-    .then((hash) => {
-      User.create({
+  bcrypt.hash(password, 10).then((hash) => {
+    User
+      .create({
         name, about, avatar, email, password: hash,
+      })
+      .then(() => res.status(201).send(
+        {
+          data: {
+            name, about, avatar, email,
+          },
+        },
+      ))
+      // eslint-disable-next-line consistent-return
+      .catch((err) => {
+        if (err.code === 11000) {
+          return next(new ConflictError('Пользователь с таким электронным адресом уже существует'));
+        } if (err.name === 'ValidationError') {
+          return next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
+        } next(err);
       });
-    })
-    .then(() => res.status(201).send({
-      data: {
-        name, about, avatar, email,
-      },
-    }))
-    // eslint-disable-next-line consistent-return
-    .catch((err) => {
-      if (err.code === 11000) {
-        return next(new ConflictError('Пользователь с таким электронным адресом уже существует'));
-      } if (err.name === 'ValidationError') {
-        return next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
-      } next(err);
-    })
+  })
     .catch(next);
 };
 
