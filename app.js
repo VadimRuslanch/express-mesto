@@ -2,18 +2,19 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const { errors } = require('celebrate');
 const routes = require('./routes/index');
 const auth = require('./middlewares/auth');
+const { login, createUser } = require('./controllers/users');
+const { validationCreateUser, validationLogin } = require('./middlewares/validation');
 
 const app = express();
 app.use(bodyParser.json());
 
 const { PORT = 3000, MONGO_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
-const { login, createUser } = require('./controllers/users');
-const { validationCreateUser, validationLogin } = require('./middlewares/validation');
 
-app.post('/signin', validationCreateUser, login);
-app.post('/signup', validationLogin, createUser);
+app.post('/signin', validationLogin, login);
+app.post('/signup', validationCreateUser, createUser);
 app.use(auth);
 app.use(routes);
 
@@ -21,8 +22,6 @@ async function connect() {
   try {
     await mongoose.set('strictQuery', false);
     await mongoose.connect('mongodb://localhost:27017/mestodb', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
       family: 4,
     });
     // eslint-disable-next-line no-console
@@ -36,6 +35,7 @@ async function connect() {
   }
 }
 
+app.use(errors());
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
   res.status(statusCode).send({
